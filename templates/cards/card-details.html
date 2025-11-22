@@ -1,0 +1,270 @@
+{% extends 'partials/dashboard-base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content  %}
+
+    <!-- Dashboard Section start -->
+    <section class="dashboard-section body-collapse">
+        <div class="overlay pt-120">
+            <div class="container-fruid">
+                <div class="row">
+                    <div class="col-xl-11 col-lg-11">
+                        <div class="section-content">
+
+                            <div class="transactions-popup">
+                                <div class="container-fruid">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div>
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header justify-content-between">
+                                                            <h5>Credit Card</h5>
+                                                            <a href="{% url 'account:dashboard' %}">
+                                                                <img src="{% static 'assets1/images/bootstrap-icons-1.8.2/arrow-left-circle.svg' %}" alt="Currency Exchange Icon">
+
+                                                            </a>
+                                                        </div>
+                                                        <div class="main-content">
+                                                            <div class="row">
+                                                                <div class="col-sm-5 text-center">
+                                                                    <div class="icon-area p-3">
+                                                                        <div class="col-12">
+                                                                            <div class="card__main">
+                                                                                <div class="{% if card.card_type == 'verve' %}Front_card {% elif card.card_type == 'master' %}masterCard {% elif card.card_type == 'visa' %}visaCard {% endif %}">
+                                                                                    <div class="top_card">
+                                                                                        <span class="visa">{{card.card_type|upper}}</span>
+                                                                                        <div class="logo">
+                                                                                            <img src="https://upload.wikimedia.org/wikipedia/commons/2/23/Verve_Image.png"  class="logo" alt="logo" />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="middle_card" style="margin-top: 35px;">
+                                                                                        <span class="chip"></span>
+                                                                                        <div class="card_number">{{card.card_number}}</div>
+                                                                                    </div>
+                                                                                    <div class="bottom_card">
+                                                                                        <div class="card_info">
+                                                                                            <div class="card_holder_name" style="text-align: left;">₱ {{card.amount|intcomma}}</div>
+                                                                                            <div class="card_holder_name">{{card.name}}</div>
+                                                                                        </div>
+                                                                                        <div class="cardf_info">
+                                                                                            <div class="card_dholder_info">
+                                                                                                <span class="expire_month">{{card.month}}/{{card.year}}</span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="back_card">
+                                                                                    <div class="top_card">
+                                                                                        <span class="black_strip"></span>
+                                                                                        <div class="cvc_strip">
+                                                                                            <span class="cvc_number">{{card.cvc}}</span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="bottom_card">
+                                                                                        <div class="flex">
+                                                                                            <span class="sticker"></span>
+                                                                                            <div class="logo1">
+                                                                                                <span></span>
+                                                                                                <span></span>
+                                                                                                <span></span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                </div>
+                                                                <div class="col-sm-7">
+                                                                    <div class="right-area">
+                                                                        <h6>Credit Card Details</h6>
+                                                                        <ul class="payment-details">
+                                                                            <li>
+                                                                                <span>Current Amount</span>
+                                                                                <span>${{card.amount|intcomma}}</span>
+                                                                            </li>
+                                                                            <li>
+                                                                                <span>Name of holder</span>
+                                                                                <span>{{card.name|title}}</span>
+                                                                            </li>
+                                                                            <li>
+                                                                                <span>Card Type</span>
+                                                                                <span>{{card.card_type|upper}}</span>
+                                                                            </li>
+                                                                            <li>
+                                                                                <span>Card Number</span>
+                                                                                <span>{{card.card_number}}</span>
+                                                                            </li>
+                                                                            <li>
+                                                                                <span>Expiry Month & Year</span>
+                                                                                <span>{{card.month}}/{{card.year}}</span>
+                                                                            </li>
+                                                                            <li>
+                                                                                <span>CVV</span>
+                                                                                <span>{{card.cvc}}</span>
+                                                                            </li>
+                                                                            <li>
+                                                                                <div  class="w-100">
+                                                                                    <button type="button" class="reg btn btn-primary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#addcardMod">
+                                                                                        Fund Card
+                                                                                    </button>  
+                                                                                    <button type="button" class="reg btn btn-success w-100 mb-2" data-bs-toggle="modal" data-bs-target="#withdraw_fund">
+                                                                                        Withdraw
+                                                                                    </button>
+                                                                                    <button type="button" class="reg btn btn-danger w-100 mb-2" data-bs-toggle="modal" data-bs-target="#card_removal_confirmation">
+                                                                                        Remove Card
+                                                                                    </button>  
+                                                                                </div>                                                                                                                                                      
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Dashboard Section end -->
+
+ <!-- Fund Card Popup start -->
+ <div class="add-card">
+    <div class="container-fruid">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="modal fade" id="addcardMod" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header justify-content-between">
+                                <h6>Fund Credit Card</h6>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                            <form action="{% url "core:fund-card" card.card_id %}" method="POST">
+                                {% csrf_token %}
+                                <div class="row justify-content-center">
+                                    <div class="col-md-12">
+                                        <div class="single-input">
+                                            <label for="cardNumber">Card Number</label>
+                                            <input type="text" id="cardNumber" value="{{ card.card_number }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="single-input">
+                                            <label for="cardHolder">Card Holder</label>
+                                            <input type="text" id="cardHolder" value="{{ card.name|title }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="single-input">
+                                            <label for="month">Paylio Available Balance</label>
+                                            <input type="text" id="month" value="${{ account.account_balance|intcomma }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="single-input">
+                                            <label for="year">Enter Amount</label>
+                                            <input type="number" name="funding-amount"  id="amount" placeholder="$20">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="btn-border w-100">
+                                            <button type="submit" class="cmn-btn w-100">Confirm Transaction</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add Card Popup End -->
+
+ <!-- Withdraw from Card Popup start -->
+ <div class="add-card">
+    <div class="container-fruid">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="modal fade" id="withdraw_fund" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header justify-content-between">
+                                <h6>Withdraw from Card</h6>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                            <form action="{% url "core:withdraw-from-card" card.card_id %}" method="POST">
+                                {% csrf_token %}
+                                <div class="row justify-content-center">
+                                    
+                                    <div class="col-md-12">
+                                        <div class="single-input">
+                                            <label for="month">Card's Available Balance</label>
+                                            <input type="text" id="month" value="${{ card.amount|intcomma }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="single-input">
+                                            <label for="year">Enter Amount</label>
+                                            <input type="number" name="amount" id="amount" placeholder="$20">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="btn-border w-100">
+                                            <button class="cmn-btn w-100">Confirm Transaction</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ <!-- Withdraw from Card Popup End -->
+
+<!-- Confirm Card Removal start -->
+<div class="add-card">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="modal fade" id="card_removal_confirmation" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header justify-content-between">
+                                <h6>Remove Card</h6>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <p style="font-size: 1rem; font-weight: bold;">
+                                    Are you sure you want to remove this card? <br>This action cannot be undone.
+                                </p>
+                                <div class="alert mt-2" role="alert" style="background-color: #fff3cd; color: #856404; font-size: 0.9rem;">
+                                    Note: Any funds will be transferred to your account.
+                                </div>
+                                <a href="{% url 'core:remove-card' card.card_id %}" class="cmn-btn w-100 mt-1">Confirm Card Removal</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Confirm Card Removal end -->
+ {% endblock content %}

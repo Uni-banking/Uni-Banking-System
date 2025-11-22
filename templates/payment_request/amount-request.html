@@ -1,0 +1,67 @@
+{% extends "partials/dashboard-base.html" %}
+{% load static %}
+{% load humanize %}
+{% load custom_filters %}
+    {% block content %}
+
+    <!-- Dashboard Section start -->
+    <section class="dashboard-section body-collapse pay step step-2">
+        <div class="overlay pt-120">
+            <div class="container-fruid">
+                <div class="main-content">
+                    <div class="head-area d-flex align-items-center justify-content-between">
+                        <h4>Request Payment</h4>
+                    </div>
+                    <div class="choose-recipient">
+                        <div class="step-area">
+                            <span class="mdr">Step 2 of 3</span>
+                            <h5>Set Amount to Request</h5>
+                        </div>
+                        <div class="user-select">
+                            <div class="single-user">
+                                <div class="left d-flex align-items-center">
+                                    {% if account_query  %}
+                                        <div class="img-area">
+                                            <img src="{{ account_query.user.unibank.image.url }}" style="width: 100px; height:100px; border-radius:50%; object-fit:cover;" alt="image">
+                                        </div>
+                                        <div class="text-area">
+                                            <p>{{account_query.user.unibank.full_name|title}}</p>
+                                            <span class="mdr"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="773f12051a1619444237101a161e1b5914181a">{{account_query.user.email}}</a></span><br>
+                                            <span class="mdr">{{account_query.account_number}}</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="right">
+                                    <a href="{% url "core:search-account" %}">
+                                        <i class="icon-h-edit"></i>
+                                        Edit
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <form action="{% url "core:amount-request-process" account_query.account_number %}" method="POST">
+                        {% csrf_token %}
+                        <div class="send-banance">
+                            <span class="mdr">Amount to Request</span>
+                            <div class="input-area">
+                                <input class="mdr" placeholder="Enter Amount" type="number" name="amount-request" id="amount-request">
+                            </div>
+                            <br>
+                            <span class="mdr">Request Description</span>
+                            <div class="input-area">
+                                <input class="mdr" onkeyup="CalculateBalance()" placeholder="Purpose of Request (e.g., School Fees)" type="text" name="description">
+                            </div>
+                        </div>
+                        <div class="footer-area mt-40">
+                            <a href="{% url "core:request-search-users" %}">Previous Step</a>
+                            <button type="submit" style="padding: 10px 30px; border-radius:19px; background: #d85a45; color: #fff; " class="active">Next</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Dashboard Section end -->
+     
+    {% endblock content %}

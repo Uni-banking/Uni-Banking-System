@@ -1,0 +1,100 @@
+{% extends "partials/dashboard-base.html" %}
+{% load static %}
+{% load humanize %}
+{% load custom_filters %}
+    {% block content %}
+
+    <section class="dashboard-section body-collapse">
+        <div class="overlay pt-120">
+            <div class="container-fruid">
+                <div class="row">
+                    <div class="col-xl-11 col-lg-11">
+                        <div class="section-content">
+                            <div class="transactions-popup">
+                                <div class="container-fruid">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div>
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header justify-content-between">
+                                                            <h5>Transaction Details</h5>
+                                                            <a href="{% url "account:dashboard" %}">
+                                                                <img src="{% static 'assets1/images/bootstrap-icons-1.8.2/arrow-left-circle.svg' %}" alt="Currency Exchange Icon">
+                                                            </a>
+                                                        </div>
+                                                        <div class="main-content">
+                                                            <div class="row">
+                                                                <div class="col-sm-5 text-center">
+                                                                    <div class="icon-area">
+                                                                    </div>
+                                                                    <div class="text-area">
+                                                                        <h5><b>{{transaction.amount|intcomma}}</b></h5>
+                                                                        <p>{{transaction.date|date:"M d, Y"}}</p>
+                                                                        {% if transaction.status == "completed" %}
+                                                                        <p class="text-success">{{transaction.status|title}}</p>
+                                                                        {% elif transaction.status == "processing" %}
+                                                                        <p class="text-warning">{{transaction.status|title}}</p>
+                                                                        {% elif transaction.status == "pending" %}
+                                                                        <p class="text-warning">{{transaction.status|title}}</p>
+                                                                        {% elif transaction.status == "failed" %}
+                                                                        <p class="text-danger">{{transaction.status|title}}</p>
+                                                                        {% endif %}                                              
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-7">
+                                                                    <div class="right-area">
+                                                                        <h6>Transaction Details</h6>
+                                                                        <ul class="payment-details">
+                                                                            <li>
+                                                                                <span>Payment Amount</span>
+                                                                                <span>{{transaction.amount|intcomma}} PHP</span>
+                                                                            </li>
+                                                                            <li>
+                                                                                <span>Fee</span>
+                                                                                <span>Free PHP</span>
+                                                                            </li>
+                                                                            <li>
+                                                                                <span>Total Amount</span>
+                                                                                <span> {{transaction.amount|intcomma}} PHP </span>
+                                                                            </li>
+                                                                        </ul>
+                                                                        <ul class="payment-info">
+                                                                            <li>
+                                                                                <p>Payment From</p>
+                                                                                <span class="mdr">{{transaction.sender.unibank.full_name}}</span>
+                                                                            </li>
+                                                                            <li>
+                                                                                <p>Payment To</p>
+                                                                                <span class="mdr">{{transaction.recipient.unibank.full_name}}</span>
+                                                                            </li>
+                                                                            <li>
+                                                                                <p>Payment Description</p>
+                                                                                <span class="mdr">{{transaction.payment_description}}</span>
+                                                                            </li>
+                                                                            <li>
+                                                                                <p>Transaction ID:</p>
+                                                                                <span class="mdr">{{transaction.transaction_id}}</span>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% endblock content %}
+

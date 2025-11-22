@@ -1,0 +1,110 @@
+{% extends "partials/dashboard-base.html" %}
+{% load static %}
+{% load humanize %}
+{% load custom_filters %}
+    {% block content %}
+
+    <!-- Dashboard Section start -->
+    <section class="dashboard-section body-collapse pay step step-2">
+        <div class="overlay pt-120">
+            <div class="container-fruid">
+                <div class="main-content">
+                    <div class="head-area d-flex align-items-center justify-content-between">
+                        <h4>Make a Payment</h4>
+                    </div>
+                    <div class="choose-recipient">
+                        <div class="step-area">
+                            <span class="mdr">Step 2 of 3</span>
+                            <h5>Set Amount of transfer</h5>
+                        </div>
+                        <div class="user-select">
+                            <div class="single-user">
+                                <div class="left d-flex align-items-center">
+                                    {% if account_query  %}
+                                        <div class="img-area">
+                                            <img src="{{ account_query.user.unibank.image.url }}" style="width: 100px; height:100px; border-radius:50%; object-fit:cover;" alt="image">
+                                        </div>
+                                        <div class="text-area">
+                                            <p>{{account_query.user.unibank.full_name|title}}</p>
+                                            <span class="mdr"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="773f12051a1619444237101a161e1b5914181a">{{account_query.user.email}}</a></span><br>
+                                            <span class="mdr">{{account_query.account_number}}</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="right">
+                                    <a href="{% url "core:search-account" %}">
+                                        <i class="icon-h-edit"></i>
+                                        Edit
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <form action="{% url "core:amount-transfer-process" account_query.account_number %}" method="POST">
+                        {% csrf_token %}
+                        <div class="send-banance">
+                            <span class="mdr">You Send</span>
+                            <div class="input-area">
+                                <input class="mdr" onkeyup="CalculateBalance()" placeholder="{{request.user.account.account_balance|intcomma}}" type="number" name="amount-send" id="amount-send">
+                                <select>
+                                    <option value="1">PHP</option>
+                                    <option value="2">USD</option>
+                                    <option value="3">AUS</option>
+                                </select>
+                            </div>
+                            <p>Available Balance:<b>₱{{request.user.account.account_balance|intcomma}}</b></p>
+                            <p id="new_balance"></p>
+                            <p class="text-danger" id="error-div"></p>
+                            <br>
+                            <span class="mdr">Payment Description</span>
+                            <div class="input-area">
+                                <input class="mdr" onkeyup="CalculateBalance()" placeholder="Enter payment description (e.g., School Fees)" type="text" name="description">
+                            </div>
+                        </div>
+                        <script>
+                            function CalculateBalance(){
+                                let available_balance = "{{ request.user.account.account_balance}}" //Get users current account Balance
+                                let new_balance = document.getElementById("new_balance")
+                                let send_amount_input = document.getElementById("amount-send").value
+                                let errorDiv = document.getElementById("error-div")
+                                let total_to_pay = document.getElementById("total-to-pay")
+                                
+                                let errors = []
+
+                                calculated_new_balance = available_balance - send_amount_input;
+                                new_balance.innerHTML = `Resulting Balance:<b>₱${calculated_new_balance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</b>`;
+                                total_to_pay.innerHTML = `PHP<b>${send_amount_input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</b>`;
+
+                                if (calculated_new_balance < 0){
+                                    new_balance.style.color = "red";
+                                    alert("Insufficient funds: Account ineligible to send more than ₱" + available_balance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+                                } else {
+                                    new_balance.style.color = "#27276e"
+                                }
+                            }
+                        </script>
+
+                        <ul class="total-fees">
+                            <li>Convenience Fee</li>
+                            <li>Temporarily Free</li>
+                        </ul>
+                        <ul class="total-fees pay">
+                            <li>
+                                <h5>Total To Pay</h5>
+                            </li>
+                            <li>
+                                <h5 id="total-to-pay">PHP 0.00</h5>
+                            </li>
+                        </ul>
+                        <div class="footer-area mt-40">
+                            <a href="pay-step-1.html">Previous Step</a>
+                            <button type="submit" style="padding: 10px 30px; border-radius:19px; background: #d85a45; color: #fff; " class="active">Next</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Dashboard Section end -->
+     
+    {% endblock content %}

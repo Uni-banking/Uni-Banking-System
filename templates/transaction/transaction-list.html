@@ -1,0 +1,339 @@
+{% extends "partials/dashboard-base.html" %} 
+{% load static %} 
+{% load humanize%}
+{% load custom_filters %} 
+{% block content %}
+
+<!-- Dashboard Section start -->
+<section class="dashboard-section body-collapse">
+  <div class="overlay pt-120">
+    <div class="container-fruid">
+      <div class="row">
+        <div class="col-xl-12 col-lg-12">
+          <div class="section-content">
+            <div class="transactions-area">
+              <div class="section-text">
+                <h5>My Transactions</h5>
+                <p><small>Updated every several minutes.</small></p>
+              </div>
+              <div
+                class="top-area d-flex align-items-center justify-content-between"
+              >
+                <ul class="nav nav-tabs" role="tablist">
+                  <li class="nav-item" role="presentation">
+                    <button
+                      class="nav-link active"
+                      id="latest-tab"
+                      data-bs-toggle="tab"
+                      data-bs-target="#latest"
+                      type="button"
+                      role="tab"
+                      aria-controls="latest"
+                      aria-selected="true"
+                    >
+                      Sent
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button
+                      class="nav-link"
+                      id="upcoming-tab"
+                      data-bs-toggle="tab"
+                      data-bs-target="#upcoming"
+                      type="button"
+                      role="tab"
+                      aria-controls="upcoming"
+                      aria-selected="false"
+                    >
+                      Received
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button
+                      class="nav-link"
+                      id="sender-request-tab"
+                      data-bs-toggle="tab"
+                      data-bs-target="#sender-request"
+                      type="button"
+                      role="tab"
+                      aria-controls="upcoming"
+                      aria-selected="false"
+                    >
+                      Requests Sent 
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button
+                      class="nav-link"
+                      id="recipient-request-tab"
+                      data-bs-toggle="tab"
+                      data-bs-target="#recipient-request"
+                      type="button"
+                      role="tab"
+                      aria-controls="upcoming"
+                      aria-selected="false"
+                    >
+                      Received Requests
+                    </button>
+                  </li>
+                </ul>
+                
+              </div>
+              <div class="tab-content mt-40">
+                <div class="tab-pane fade show active" id="latest" role="tabpanel" aria-labelledby="latest-tab">
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">Name / Business</th>
+                          <th scope="col">Date</th>
+                          <th scope="col">Status</th>
+                          <th scope="col">Amount</th>
+                          <th scope="col">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for sent_trn in sender_transaction %}
+                          <tr data-bs-toggle="modal" data-bs-target="#transactionsMod">
+                            <th scope="row">
+                              <p>{{ sent_trn.recipient.unibank.full_name|title }}</p>
+                              <p class="mdr">{{ sent_trn.transaction_type|title }}</p>
+                            </th>
+                            <td>
+                                <p><small>{{ sent_trn.date|date:"h:i"}}</small></p>
+                              <p class="mdr">{{ sent_trn.date|date:"d M, Y"}}</p>
+                            </td>
+                            <td>
+                              {% if sent_trn.status == "completed" %}
+                              <p class="text-success">{{sent_trn.status|title}}</p>
+                              {% elif sent_trn.status == "processing" %}
+                              <p class="inprogress">{{sent_trn.status|title}}</p>
+                              {% elif sent_trn.status == "pending" %}
+                              <p class="inprogress">{{sent_trn.status|title}}</p>
+                              {% elif sent_trn.status == "failed" %}
+                              <p class="text-danger">{{sent_trn.status|title}}</p>
+                              {% endif %}
+                            </td>
+                            <td>
+                              <p class="mdr">-₱{{sent_trn.amount|intcomma}}</p>
+                            </td>
+                            <td>
+                              <a href="{% url "core:transaction-detail" sent_trn.transaction_id %}" class="btn btn-primary">View <i class="fas fa-eye"></i> </a>
+                            </td>
+                          </tr>
+                        {% empty %}
+                          <tr> 
+                            <td colspan="5" class="text-center">
+                              <div><small>No transfers have been sent yet.</small></div> 
+                            </td>
+                          </tr>
+                          <tr>
+                            <td colspan="5" class="text-center"></td>
+                          </tr>                        
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="upcoming" role="tabpanel" aria-labelledby="upcoming-tab">
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">Name / Business</th>
+                          <th scope="col">Date</th>
+                          <th scope="col">Status</th>
+                          <th scope="col">Amount</th>
+                          <th scope="col">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for receipt_trn in recipient_transaction %}
+                          <tr data-bs-toggle="modal" data-bs-target="#transactionsMod">
+                              <th scope="row">
+                                  <p>{{ receipt_trn.sender.unibank.full_name|title }}</p>
+                                  <p class="mdr">{{ receipt_trn.transaction_type|title }}</p>
+                              </th>
+                              <td>
+                                  <p><small>{{ r.date|date:"h:i"}}</small></p>
+                                  <p class="mdr">{{ receipt_trn.date|date:"d M, Y"}}</p>
+                              </td>
+                            <td>
+                              {% if receipt_trn.status == "completed" %}
+                              <p class="text-success">{{receipt_trn.status|title}}</p>
+                              {% elif receipt_trn.status == "processing" %}
+                              <p class="inprogress">{{receipt_trn.status|title}}</p>
+                              {% elif receipt_trn.status == "pending" %}
+                              <p class="inprogress">{{receipt_trn.status|title}}</p>
+                              {% elif receipt_trn.status == "failed" %}
+                              <p class="text-danger">{{receipt_trn.status|title}}</p>
+                              {% endif %}
+                            </td>
+                            <td>
+                              <p>+₱{{receipt_trn.amount|intcomma}}</p>
+                            </td>
+                            <td>
+                              <a href="{% url "core:transaction-detail" receipt_trn.transaction_id %}" class="btn btn-primary">View <i class="fas fa-eye"></i> </a>
+                            </td>
+                          </tr>
+                        {% empty %}
+                          <tr> 
+                            <td colspan="5" class="text-center">
+                              <div><small>No transfers have been received yet.</small></div> 
+                            </td>
+                          </tr>
+                          <tr>
+                            <td colspan="5" class="text-center"></td>
+                          </tr>                        
+  
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="sender-request" role="tabpanel" aria-labelledby="sender-request-tab">
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">Sent To</th>
+                          <th scope="col">Date</th>
+                          <th scope="col">Status</th>
+                          <th scope="col">Amount</th>
+                          <th scope="col">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for req_sender_trn in request_sender_transaction %}
+                          <tr data-bs-toggle="modal" data-bs-target="#transactionsMod">
+                              <th scope="row">
+                                  <p>{{ req_sender_trn.recipient.unibank.full_name|title }}</p>
+                                  <p class="mdr">{{ req_sender_trn.transaction_type|title }}</p>
+                              </th>
+                              <td>
+                                  <p><small>{{ r.date|date:"h:i"}}</small></p>
+                                  <p class="mdr">{{ req_sender_trn.date|date:"d M, Y"}}</p>
+                              </td>
+                            <td>
+                              {% if req_sender_trn.status == "completed" %}
+                              <p class="text-success">{{req_sender_trn.status|title}}</p>
+                              {% elif req_sender_trn.status == "processing" %}
+                              <p class="inprogress">{{req_sender_trn.status|title}}</p>
+                              {% elif req_sender_trn.status == "pending" %}
+                              <p class="inprogress">{{req_sender_trn.status|title}}</p>
+                              {% elif req_sender_trn.status == "failed" %}
+                              <p class="text-danger">{{req_sender_trn.status|title}}</p>
+                              {% elif req_sender_trn.status == "request_sent" %}
+                              <p class="text-success">{{req_sender_trn.status|title|replace_underscores}}</p>
+                              {% elif req_sender_trn.status == "request_processing" %}
+                              <p class="inprogress">{{req_sender_trn.status|title|replace_underscores}}</p>
+                              {% elif req_sender_trn.status == "request_settled" %}
+                              <p class="text-success">{{req_sender_trn.status|title|replace_underscores}}</p>
+                              {% endif %}
+                            </td>
+                            <td>
+                              <p>+₱{{req_sender_trn.amount|intcomma}}</p>
+                            </td>
+                            <td>
+                              {% if req_sender_trn.status == "request_settled" %}
+                                <a href="" class="btn btn-success">Settled <i class="fas fa-check-circle"></i> </a>
+                              {% elif req_sender_trn.status == "request_sent"%}
+                                <a href="{% url "core:cancel-payment-request" req_sender_trn.transaction_id %}" class="btn btn-danger">Cancel <i class="fas fa-x"></i> </a>
+                              {% elif req_sender_trn.status == "request_processing" %}
+                                <a href="{% url "core:amount-request-confirmation" req_sender_trn.sender.account.account_number req_sender_trn.transaction_id %}" class="btn btn-warning">Approve <i class="fas fa-check-circle"></i> </a>
+                              {% endif %}
+                            </td>
+                          </tr>
+                        {% empty %}
+                          <tr> 
+                            <td colspan="5" class="text-center">
+                              <div><small>No requests have been sent yet.</small></div> 
+                            </td>
+                          </tr>
+                          <tr>
+                            <td colspan="5" class="text-center"></td>
+                          </tr>                        
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="recipient-request" role="tabpanel" aria-labelledby="recipient-request-tab">
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">From</th>
+                          <th scope="col">Date</th>
+                          <th scope="col">Status</th>
+                          <th scope="col">Amount</th>
+                          <th scope="col">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for req_receipt_trn in request_recipient_transaction %}
+                          <tr data-bs-toggle="modal" data-bs-target="#transactionsMod">
+                              <th scope="row">
+                                  <p>{{ req_receipt_trn.sender.unibank.full_name|title }}</p>
+                                  <p class="mdr">{{ req_receipt_trn.transaction_type|title }}</p>
+                              </th>
+                              <td>
+                                  <p><small>{{ r.date|date:"h:i"}}</small></p>
+                                  <p class="mdr">{{ req_receipt_trn.date|date:"d M, Y"}}</p>
+                              </td>
+                            <td>
+                              {% if req_receipt_trn.status == "completed" %}
+                              <p class="text-success">{{req_receipt_trn.status|title}}</p>
+                              {% elif req_receipt_trn.status == "processing" %}
+                              <p class="inprogress">{{req_receipt_trn.status|title}}</p>
+                              {% elif req_receipt_trn.status == "pending" %}
+                              <p class="inprogress">{{req_receipt_trn.status|title}}</p>
+                              {% elif req_receipt_trn.status == "failed" %}
+                              <p class="text-danger">{{req_receipt_trn.status|title}}</p>
+                              {% elif req_receipt_trn.status == "request_sent" %}
+                              {% comment %} <p class="text-success">{{req_receipt_trn.status|title|replace_underscores}}</p> {% endcomment %}
+                              <p class="text-danger">Request Received</p>
+                              {% elif req_receipt_trn.status == "request_processing" %}
+                              <p class="inprogress">{{req_receipt_trn.status|title|replace_underscores}}</p>
+                              {% elif req_receipt_trn.status == "request_settled" %}
+                              <p class="text-success">{{req_receipt_trn.status|title|replace_underscores}}</p>
+                              {% endif %}
+                            </td>
+                            <td>
+                              <p>+₱{{req_receipt_trn.amount|intcomma}}</p>
+                            </td>
+                            <td>
+                              {% if req_receipt_trn.status == "request_settled" %}
+                                <a href="" class="btn btn-success">Settled <i class="fas fa-check-circle"></i> </a>
+                              {% elif req_receipt_trn.status == "request_sent" %}
+                                <a href="{% url "core:settlement-confirmation" req_receipt_trn.sender.account.account_number req_receipt_trn.transaction_id %}" class="btn btn-danger">Settle Now <i class="fas fa-check-circle"></i> </a>
+                              {% elif req_receipt_trn.status == "request_processing" %}  
+                                <a href="#" class="btn btn-secondary disabled">N/A</a>
+                              {% endif %}
+                            </td>
+                          </tr>
+                        {% empty %}
+                        <tr> 
+                          <td colspan="5" class="text-center">
+                            <div><small>No requests have been received yet.</small></div> 
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colspan="5" class="text-center"></td>
+                        </tr>                        
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Dashboard Section end -->
+
+{% endblock content %}
